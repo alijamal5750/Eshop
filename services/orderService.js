@@ -121,7 +121,7 @@ const session=await stripe.checkout.sessions.create({
      line_items:[ 
         {
         price_data:{
-        unit_amount:totalOrderPrice * 100,
+        unit_amount:totalOrderPrice,
         currency:'usd',
         product_data:{
         name:req.user.name,
