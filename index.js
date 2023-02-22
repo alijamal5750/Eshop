@@ -10,6 +10,11 @@ const GlobalError = require("./middlwares/errorMiddleware");
 const mountRoute=require('./routes');
 const cors=require('cors');
 const compression=require('compression');
+const {webhookcheckout}=require('.//services/orderService');
+const rateLimit=require('express-rate-limit');
+const hpp=require('hpp');
+const mongoSanitize=require('express-mongo-sanitize');
+const xss=require('xss');
 
 // connect to our database :
 dbConnecction();
@@ -24,17 +29,40 @@ app.options('*',cors());
 // compression the responce back to user (make our application faster on real deployment) :
 app.use(compression());
 
+// checkout webhook : 
+app.post('/webhook-checkout',express.raw({type:'application/json'}),webhookcheckout);
+
 // server images in Browser , localhost:port/categories/filename
 app.use(express.static(path.join(__dirname,'uploads')));
 
-// middleware
-app.use(express.json());
 
+// middleware , set limiting to body (avoid attackers send a large body data requests)
+app.use(express.json({limit:'20kb'}));
+
+// prevent or sanitize from no sql injections by sanitize before validation layer :
+app.use(mongoSanitize());
+
+//prevent or sanitize from cross side scripting (html,js,css) in body before validation layer : 
+app.use(xss());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log(`mode : ${process.env.NODE_ENV}`);
 }
+
+// avoid atackers to send many requests , in the postman you will see x-Rate-limit,Remaining,Reset(time windowsMs):
+const limiter=rateLimit({
+windowMs:15*10*1000,
+max:5,
+message:'Too many requests from this ip,please try again after 15 minutes!',
+});
+
+// apply to al routes in application : 
+app.use('/api',limiter);
+
+// prevent to send multiple parameters with the same name(select last one only) not accespt an araay :
+// not use this to array parameter : in filtering  or anything so add to whitelist (not apply this middleware):
+app.use(hpp({whitelist:['price','sold','quantity','ratingsAverage','ratingsQuantity']}));
 
 // Mount Routes
 mountRoute(app);
