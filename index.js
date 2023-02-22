@@ -58,7 +58,8 @@ if (process.env.NODE_ENV === "development") {
 //});
 
 // apply to al routes in application : 
-app.use('/api',limiter);
+//app.use('/api',limiter);
+app.use('/api');
 
 // prevent to send multiple parameters with the same name(select last one only) not accespt an araay :
 // not use this to array parameter : in filtering  or anything so add to whitelist (not apply this middleware):
