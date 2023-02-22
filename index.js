@@ -51,11 +51,11 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // avoid atackers to send many requests , in the postman you will see x-Rate-limit,Remaining,Reset(time windowsMs):
-const limiter=rateLimit({
-windowMs:15*10*1000,
-max:5,
-message:'Too many requests from this ip,please try again after 15 minutes!',
-});
+//const limiter=rateLimit({
+//windowMs:15*10*1000,
+//max:5,
+//message:'Too many requests from this ip,please try again after 15 minutes!',
+//});
 
 // apply to al routes in application : 
 app.use('/api',limiter);
