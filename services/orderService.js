@@ -121,7 +121,7 @@ const session=await stripe.checkout.sessions.create({
      line_items:[ 
         {
         price_data:{
-        unit_amount:totalOrderPrice,
+        unit_amount:totalOrderPrice *100,
         currency:'usd',
         product_data:{
         name:req.user.name,
@@ -145,7 +145,7 @@ res.status(200).json({status:'success',session});
 const createCartOrder=async(session)=>{
 const cartId=session.client_reference_id;
 const shippingAddress=session.metadata;
-const orderPrice=session.amount_total;
+const orderPrice=session.amount_total /100;
 const cart=await Cart.findById(cartId);
 const user=await User.findOne({email:session.customer_email});
 
