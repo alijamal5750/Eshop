@@ -1,6 +1,7 @@
 const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
 const Product = require("../models/productModel");
+const User = require("../models/userModel");
 const factroy=require('./handlersFactory');
 const asyncHandler=require('express-async-handler');
 const ApiError = require("../utils/apiError");
@@ -138,4 +139,55 @@ metadata:req.body.shippingAddress,
 });
 // send session to responce : 
 res.status(200).json({status:'success',session});
+});
+
+// for webhook after paymnet is paid : 
+const createCartOrder=async(session)=>{
+const cartId=session.client_reference_id;
+const shippingAddress=session.metadata;
+const orderPrice=session.amount_total /100;
+const cart=await Cart.findById(cartId);
+const user=await User.findOne({email:session.customer_email});
+
+// create order : 
+const order=await Order.create({
+    user:user._id,
+    cartItems:cart.cartItems,
+    shippingAddress:shippingAddress,
+    totalOrderPrice:orderPrice,
+    isPaid:true,
+    paidAt:Date.now(),
+    paymentMethodTypes:'cart',
+});
+if(order){
+    const bulkOption=cart.cartItems.map(item=>({
+        updateOne:{
+            filter:{_id:item.product},
+            update:{$inc:{quantity:-item.quantity,sold:+item.quantity}}
+        }
+        }));
+        await Product.bulkWrite(bulkOption,{});
+
+        // 5- clear Cart depend on CartId in params : 
+        await Cart.findByIdAndDelete(cartId);
+}
+};
+
+// this webhook will run when stripe payment successfully paid : 
+exports.webhookcheckout=asyncHandler(async(req,res,next)=>{
+const slg=req.params.headers('stripe-signture');
+
+let event;
+
+try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return response.status(400).send(`Webhook Error: ${err.message}`);
+  }
+  if(event.type=='checkout.session.completed'){
+    // create order 
+    createCartOrder(event.data.object);
+  }
+  res.status(201).json({received:true});
+
 });
