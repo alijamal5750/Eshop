@@ -163,8 +163,8 @@ if(order){
     const bulkOption=cart.cartItems.map(item=>({
         updateOne:{
             filter:{_id:item.product},
-            update:{$inc:{quantity:-item.quantity,sold:+item.quantity}}
-        }
+            update:{$inc:{quantity:-item.quantity,sold:+item.quantity}},
+        },
         }));
         await Product.bulkWrite(bulkOption,{});
 
