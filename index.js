@@ -11,7 +11,6 @@ const mountRoute=require('./routes');
 const cors=require('cors');
 const compression=require('compression');
 const {webhookcheckout}=require('.//services/orderService');
-const rateLimit=require('express-rate-limit');
 const hpp=require('hpp');
 const mongoSanitize=require('express-mongo-sanitize');
 const xss=require('xss');
@@ -50,15 +49,8 @@ if (process.env.NODE_ENV === "development") {
   console.log(`mode : ${process.env.NODE_ENV}`);
 }
 
-// avoid atackers to send many requests , in the postman you will see x-Rate-limit,Remaining,Reset(time windowsMs):
-//const limiter=rateLimit({
-//windowMs:15*10*1000,
-//max:5,
-//message:'Too many requests from this ip,please try again after 15 minutes!',
-//});
 
 // apply to al routes in application : 
-//app.use('/api',limiter);
 app.use('/api');
 
 // prevent to send multiple parameters with the same name(select last one only) not accespt an araay :
