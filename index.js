@@ -73,7 +73,7 @@ app.all("*", (req, res, next) => {
   //  const err=new Error('Cant find this Route : ' + req.originalUrl);
   //  next(err.message);
 
-  // create class and pass the message and status code to it :
+  // ccreate class and pass the message and status code to it :
   next(new ApiError(`Cant find this route : ${req.originalUrl}`, 400));
 });
 
