@@ -175,7 +175,7 @@ if(order){
 
 // this webhook will run when stripe payment successfully paid : 
 exports.webhookcheckout=asyncHandler(async(req,res,next)=>{
-const slg=req.headers['stripe-signature'];
+const sig=req.headers['stripe-signature'];
 
 let event;
 
