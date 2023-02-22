@@ -157,7 +157,7 @@ const order=await Order.create({
     totalOrderPrice:orderPrice,
     isPaid:true,
     paidAt:Date.now(),
-    paymentMethodTypes:'cart',
+    paymentMethodTypes:'card',
 });
 if(order){
     const bulkOption=cart.cartItems.map(item=>({
