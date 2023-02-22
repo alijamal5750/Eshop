@@ -30,7 +30,7 @@ app.options('*',cors());
 app.use(compression());
 
 // checkout webhook : 
-app.post('/api/v1/webhook_checkout',express.raw({type:'application/json'}),webhookcheckout);
+app.post('/webhook_checkout',express.raw({type:'application/json'}),webhookcheckout);
 
 // server images in Browser , localhost:port/categories/filename
 app.use(express.static(path.join(__dirname,'uploads')));
