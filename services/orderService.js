@@ -184,7 +184,7 @@ try {
   } catch (err) {
     return response.status(400).send(`Webhook Error: ${err.message}`);
   }
-  if(event.type=='checkout.session.completed'){
+  if(event.type==='checkout.session.completed'){
     // create order 
     createCartOrder(event.data.object);
   }
