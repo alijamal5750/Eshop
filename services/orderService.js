@@ -153,7 +153,7 @@ const user=await User.findOne({email:session.customer_email});
 const order=await Order.create({
     user:user._id,
     cartItems:cart.cartItems,
-    shippingAddress:shippingAddress,
+    shippingAddress,
     totalOrderPrice:orderPrice,
     isPaid:true,
     paidAt:Date.now(),
@@ -175,7 +175,7 @@ if(order){
 
 // this webhook will run when stripe payment successfully paid : 
 exports.webhookcheckout=asyncHandler(async(req,res,next)=>{
-const slg=req.headers('stripe-signature');
+const slg=req.headers['stripe-signature'];
 
 let event;
 
@@ -188,6 +188,6 @@ try {
     // create order 
     createCartOrder(event.data.object);
   }
-  res.status(201).json({received:true});
+  res.status(200).json({received:true});
 
 });
