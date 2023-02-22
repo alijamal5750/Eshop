@@ -67,7 +67,7 @@ app.use(hpp({whitelist:['price','sold','quantity','ratingsAverage','ratingsQuant
 // Mount Routes
 mountRoute(app);
 
-// if there are any route of our Routes api/v1/... send error by error handling
+// aif there are any route of our Routes api/v1/... send error by error handling
 app.all("*", (req, res, next) => {
   // create error and send it to error handling middleware :
   //  const err=new Error('Cant find this Route : ' + req.originalUrl);
